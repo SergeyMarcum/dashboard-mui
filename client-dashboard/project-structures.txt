@@ -1,0 +1,38 @@
+client-dashboard/
+│── src/
+│   ├── app/                               # Глобальные настройки (Router, Zustand Store)
+│   ├── layout/                            # Каркас проекта (Sidebar, Topbar, Layout)
+│   │   ├── Layout.tsx                     # Основной Layout
+│   │   ├── Sidebar.tsx                    # Боковое меню
+│   │   ├── Topbar.tsx                     # Верхний бар
+│   ├── components/                        # Переиспользуемые UI-компоненты
+│   │   ├── ProtectedRoute.tsx             # переиспользуемый компонент маршрутизации
+│   ├── features/                          # Основной функционал (Auth, Users, Dashboard)
+│   │   ├── auth/                          # Логика функций (аутентификация)
+│   │   │   │── api.ts                     # Функции работы с API (login)
+│   │   │   │── store.ts                   # Состояние пользователя (Zustand)
+│   │   │   │── components/
+│   │   │   │   ├── LoginForm.tsx
+│   │   │   │── types.ts                   # Определение типов для Auth
+│   │   │   │── index.ts                   # Экспорт всех сущностей модуля
+│   ├── pages/                             # Страницы приложения
+│   │   ├── Login.tsx                      # Страница авторизации 
+│   │   ├── Dashboard.tsx                  # Главная страница  
+│   │   ├── Settings.tsx                   # Страница настройки приложения
+│   │   ├── Users.tsx                      # Страница отображения списка пользователей
+│   ├── store/                             # Глобальное состояние (Zustand)
+│   │   ├── authStore.ts                   # Инициализация Zustand Store
+│   ├── hooks/                             # Пользовательские хуки
+│   ├── api/                               # Работа с API (Axios)
+│   │   ├── axios.tsx                      # подключение к back-end  
+│   ├── theme/                             # Глобальная тема MUI
+│   │   ├── index.ts                       # Настройка темы MUI
+│   ├── utils/                             # Вспомогательные функции (валидация, API)
+│   ├── router.tsx                         # Настройка маршрутов (Маршрутизация)
+│   ├── main.tsx                           # Точка входа
+│   ├── App.tsx                            # Корневой компонент
+│── public/                                # Публичные файлы (favicon, index.html)
+│── .gitignore
+│── package.json
+│── tsconfig.json
+│── README.md
