@@ -2,42 +2,48 @@ import { lazy, Suspense } from "react";
 import {
   BrowserRouter,
   Navigate,
-  Outlet,
   Route,
   Routes,
+  Outlet,
 } from "react-router-dom";
 import { useAuthStore } from "./store/authStore";
 import Layout from "./layout/Layout";
 
-// Ленивые загрузки страниц для оптимизации бандла
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Login = lazy(() => import("./pages/Login"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+const ProtectedRoute = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
+  return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />;
 };
 
-export const AppRouter = () => (
-  <BrowserRouter>
-    <Suspense fallback={<div>Загрузка...</div>}>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          {/* Защищённые маршруты */}
+export const AppRouter = () => {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  return (
+    <BrowserRouter>
+      <Suspense fallback={<div>Загрузка...</div>}>
+        <Routes>
           <Route
-            path="dashboard"
+            path="/"
             element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
+              isAuthenticated ? (
+                <Navigate to="/dashboard" replace />
+              ) : (
+                <Navigate to="/login" replace />
+              )
             }
           />
-          {/* Открытые маршруты */}
-          <Route path="login" element={<Login />} />
+          <Route path="/login" element={<Login />} />
+          <Route element={<ProtectedRoute />}>
+            <Route element={<Layout />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+            </Route>
+          </Route>
           <Route path="*" element={<NotFound />} />
-        </Route>
-      </Routes>
-    </Suspense>
-  </BrowserRouter>
-);
+        </Routes>
+      </Suspense>
+    </BrowserRouter>
+  );
+};

@@ -1,33 +1,33 @@
 import { create } from "zustand";
-import { login as loginAPI } from "../features/auth/api";
+import { login as apiLogin } from "../features/auth/api";
 
 interface AuthState {
   isAuthenticated: boolean;
-  user: string | null;
-  login: (username: string, password: string) => Promise<void>;
+  login: (
+    username: string,
+    password: string,
+    domain?: string,
+    rememberMe?: boolean
+  ) => Promise<void>;
   logout: () => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
-  //isAuthenticated: !!localStorage.getItem("token"), // Загружаем статус из localStorage
   isAuthenticated: false,
-  user: null,
-  login: async (username, password) => {
-    try {
-      const response = await loginAPI(username, password);
-      if (response?.token) {
-        set({ isAuthenticated: true, user: response.username });
-        if (typeof window !== "undefined") {
-          localStorage.setItem("token", response.token); // Сохраняем токен
-        }
-      }
-    } catch (error) {
-      console.error("Ошибка аутентификации", error);
-    }
-  },
+  login: async (username, password, domain = "orenburg", rememberMe) => {
+    await apiLogin(username, password, domain); // domain всегда string
 
+    // Сохраняем в локальное хранилище
+    if (rememberMe) {
+      localStorage.setItem("rememberMe", "true");
+    } else {
+      localStorage.removeItem("rememberMe");
+    }
+
+    set({ isAuthenticated: true });
+  },
   logout: () => {
-    localStorage.removeItem("token"); // Удаляем токен
-    set({ isAuthenticated: false, user: null });
+    localStorage.removeItem("rememberMe");
+    set({ isAuthenticated: false });
   },
 }));
