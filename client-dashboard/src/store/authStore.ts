@@ -12,22 +12,30 @@ interface AuthState {
   logout: () => void;
 }
 
+// Считывание состояния авторизации из localStorage (если есть)
+const storedAuthState = localStorage.getItem("isAuthenticated");
+
 export const useAuthStore = create<AuthState>((set) => ({
-  isAuthenticated: false,
+  isAuthenticated: storedAuthState === "true", // Проверяем, если в localStorage true, значит авторизован
   login: async (username, password, domain = "orenburg", rememberMe) => {
-    await apiLogin(username, password, domain); // domain всегда string
+    try {
+      await apiLogin(username, password, domain);
 
-    // Сохраняем в локальное хранилище
-    if (rememberMe) {
-      localStorage.setItem("rememberMe", "true");
-    } else {
-      localStorage.removeItem("rememberMe");
+      // Сохраняем в localStorage, если выбрано "запомнить"
+      if (rememberMe) {
+        localStorage.setItem("isAuthenticated", "true");
+      } else {
+        localStorage.setItem("isAuthenticated", "true");
+      }
+
+      set({ isAuthenticated: true });
+    } catch (error) {
+      console.error("Ошибка авторизации", error);
     }
-
-    set({ isAuthenticated: true });
   },
   logout: () => {
-    localStorage.removeItem("rememberMe");
+    // Очистка localStorage при логауте
+    localStorage.removeItem("isAuthenticated");
     set({ isAuthenticated: false });
   },
 }));

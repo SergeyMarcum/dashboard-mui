@@ -1,8 +1,9 @@
-import axios from "axios";
+import { createAPI } from "../../api/axios";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://192.168.1.248:8080";
+// Создаем экземпляр API
+const api = createAPI();
 
-// http://192.168.1.248:8080/login?username=frontend&password=!QAZxsw2!@3&domain=orenburg
+// Функция для авторизации пользователя
 export const login = async (
   username: string,
   password: string,
@@ -10,14 +11,25 @@ export const login = async (
 ) => {
   console.log("Отправляем запрос на сервер:", { username, password, domain });
 
-  const response = await axios.get(`${API_URL}/login`, {
-    params: { username, password, domain },
-  });
+  try {
+    const response = await api.get("/login", {
+      params: { username, password, domain },
+    });
 
-  return response.data;
+    return response.data; // Возвращаем данные от сервера (например, токен)
+  } catch (error) {
+    console.error("Ошибка авторизации", error);
+    throw new Error("Ошибка авторизации");
+  }
 };
 
+// Функция для получения списка доступных доменов
 export const fetchDomains = async (): Promise<Record<string, string>> => {
-  const response = await axios.get(`${API_URL}/domain-list`);
-  return response.data; // Сервер должен возвращать объект { orenburg: "Инженерно-Технический центр", ... }
+  try {
+    const response = await api.get("/domain-list");
+    return response.data; // Сервер должен возвращать объект { orenburg: "Инженерно-Технический центр", ... }
+  } catch (error) {
+    console.error("Ошибка получения доменов", error);
+    throw new Error("Ошибка получения доменов");
+  }
 };

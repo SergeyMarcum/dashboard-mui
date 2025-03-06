@@ -1,10 +1,10 @@
-import axios from "axios";
+import { createAPI } from "../../api/axios";
 
-const API_BASE_URL = "http://192.168.1.248:8080";
+// Создаем экземпляр API
+const api = createAPI();
 
-const api = axios.create({
-  baseURL: API_BASE_URL,
-  withCredentials: true,
-});
-
-export default api;
+// Пример функции получения списка пользователей
+export const fetchUsers = async () => {
+  const response = await api.get("/users");
+  return response.data; // Возвращаем список пользователей
+};

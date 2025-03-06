@@ -8,7 +8,7 @@ import {
   Divider,
 } from "@mui/material";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // Используем useNavigate для редиректа
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import EventNoteIcon from "@mui/icons-material/EventNote";
 import AssignmentIcon from "@mui/icons-material/Assignment";
@@ -22,6 +22,7 @@ import SupportIcon from "@mui/icons-material/Support";
 import LogoutIcon from "@mui/icons-material/Logout";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
+import { useAuthStore } from "../store/authStore"; // Импортируем useAuthStore для logout
 import { useSidebarStore } from "../store/useSidebarStore";
 
 const mainMenu = [
@@ -64,11 +65,18 @@ const bottomMenu = [
 
 const Sidebar = () => {
   const [open, setOpen] = useState<Record<string, boolean>>({});
+  const navigate = useNavigate(); // Для редиректа на страницу логина после logout
+  const logout = useAuthStore((state) => state.logout); // Используем logout из authStore
+  const isOpenSidebar = useSidebarStore((state) => state.isOpen); // Получаем состояние
+
+  const handleLogout = () => {
+    logout(); // Выполняем logout
+    navigate("/login"); // Редиректим на страницу авторизации
+  };
 
   const handleClick = (title: string) => {
     setOpen((prev) => ({ ...prev, [title]: !prev[title] }));
   };
-  const isOpenSidebar = useSidebarStore((state) => state.isOpen); // Получаем состояние
 
   return (
     <Drawer
@@ -119,7 +127,12 @@ const Sidebar = () => {
       <Divider />
       <List>
         {bottomMenu.map(({ title, path, icon }) => (
-          <ListItemButton key={title} component={Link} to={path}>
+          <ListItemButton
+            key={title}
+            component={title === "Выход" ? "button" : Link} // Преобразуем "Выход" в кнопку
+            onClick={title === "Выход" ? handleLogout : undefined} // Вызов logout при клике
+            to={title !== "Выход" ? path : undefined} // Для "Выход" путь не нужен
+          >
             <ListItemIcon>{icon}</ListItemIcon>
             <ListItemText primary={title} />
           </ListItemButton>

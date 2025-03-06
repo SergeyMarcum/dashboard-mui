@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import {
   BrowserRouter,
   Navigate,
@@ -21,6 +21,13 @@ const ProtectedRoute = () => {
 
 export const AppRouter = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  // Проверяем статус авторизации и загружаем необходимый путь после первого рендера
+  useEffect(() => {
+    if (isAuthenticated) {
+      // Дополнительная логика, если необходимо, например, установим состояние, что пользователь уже авторизован
+    }
+  }, [isAuthenticated]);
 
   return (
     <BrowserRouter>

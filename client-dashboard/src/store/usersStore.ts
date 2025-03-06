@@ -1,5 +1,8 @@
 import { create } from "zustand";
-import api from "../api/axios";
+import { createAPI } from "../api/axios";
+
+// Создаем экземпляр API
+const api = createAPI();
 
 interface User {
   id: number;

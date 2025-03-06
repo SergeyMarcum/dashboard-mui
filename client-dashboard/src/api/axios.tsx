@@ -1,10 +1,16 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://192.168.1.248:8080";
+// Получение базового URL из переменной окружения
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "http://192.168.1.248:8080";
 
-const api = axios.create({
-  baseURL: API_BASE_URL,
-  withCredentials: true,
-});
+// Функция для создания экземпляра axios с предустановленным базовым URL
+function createAPI() {
+  return axios.create({
+    baseURL: API_BASE_URL,
+    withCredentials: true,
+  });
+}
 
-export default api;
+// Экспортируем функцию с именем createAPI
+export { createAPI };
