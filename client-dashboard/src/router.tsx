@@ -13,6 +13,7 @@ const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Login = lazy(() => import("./pages/Login"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const UsersPage = lazy(() => import("./pages/UsersPage"));
+const NewTaskPage = lazy(() => import("./pages/NewTaskPage"));
 
 const ProtectedRoute = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -48,6 +49,7 @@ export const AppRouter = () => {
             <Route element={<Layout />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/users" element={<UsersPage />} />
+              <Route path="/tasks/create" element={<NewTaskPage />} />
             </Route>
           </Route>
           <Route path="*" element={<NotFound />} />
