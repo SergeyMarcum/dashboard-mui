@@ -12,12 +12,20 @@ import {
 } from "@mui/material";
 import { useUsersStore } from "../../store/usersStore";
 
+import usersData from "./users.json"; // Импорт JSON напрямую, для тестов
+
 const UserTable = ({ filterStatus }: { filterStatus: string }) => {
-  const { users, fetchUsers } = useUsersStore();
+  /*const { users, fetchUsers } = useUsersStore();
 
   useEffect(() => {
     fetchUsers();
   }, [fetchUsers]);
+*/
+  const { users, setUsers } = useUsersStore();
+
+  useEffect(() => {
+    setUsers(usersData); // Устанавливаем пользователей в Zustand Store
+  }, []);
 
   const filteredUsers =
     filterStatus === "all"
@@ -49,12 +57,12 @@ const UserTable = ({ filterStatus }: { filterStatus: string }) => {
               </TableCell>
               <TableCell>{index + 1}</TableCell>
               <TableCell>
-                {user.name} / {user.email}
+                {user.full_name || user.name} / {user.email || "—"}
               </TableCell>
-              <TableCell>{user.department}</TableCell>
-              <TableCell>{user.phone}</TableCell>
-              <TableCell>{user.lastVisit}</TableCell>
-              <TableCell>{user.status}</TableCell>
+              <TableCell>{user.department || "—"}</TableCell>
+              <TableCell>{user.phone || "—"}</TableCell>
+              <TableCell>{user.lastVisit || "—"}</TableCell>
+              <TableCell>{user.status || "—"}</TableCell>
               <TableCell>
                 <Button variant="contained" size="small">
                   Редактировать

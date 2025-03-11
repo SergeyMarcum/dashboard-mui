@@ -1,9 +1,6 @@
-import { createAPI } from "../../api/axios";
+import api from "../../api/axios"; // Используем единый экземпляр axios
 
-// Создаем экземпляр API
-const api = createAPI();
-
-// Функция для авторизации пользователя
+// Авторизация пользователя
 export const login = async (
   username: string,
   password: string,
@@ -16,18 +13,18 @@ export const login = async (
       params: { username, password, domain },
     });
 
-    return response.data; // Возвращаем данные от сервера (например, токен)
+    return response.data;
   } catch (error) {
     console.error("Ошибка авторизации", error);
     throw new Error("Ошибка авторизации");
   }
 };
 
-// Функция для получения списка доступных доменов
+// Получение списка доступных доменов
 export const fetchDomains = async (): Promise<Record<string, string>> => {
   try {
     const response = await api.get("/domain-list");
-    return response.data; // Сервер должен возвращать объект { orenburg: "Инженерно-Технический центр", ... }
+    return response.data;
   } catch (error) {
     console.error("Ошибка получения доменов", error);
     throw new Error("Ошибка получения доменов");

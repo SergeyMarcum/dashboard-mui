@@ -15,12 +15,10 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import { createAPI } from "../api/axios";
+import api from "../api/axios";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-
-const api = createAPI();
 
 // Определение типов данных
 interface ObjectType {

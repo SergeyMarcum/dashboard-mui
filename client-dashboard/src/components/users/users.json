@@ -1,0 +1,80 @@
+[
+  {
+    "full_name": "Василий Гордеев",
+    "id": 2,
+    "company": "ПУЭ ФУЭ",
+    "email": "gordeev@dev.of.energo.gazprom.ru",
+    "role_id": 4,
+    "status_id": null,
+    "name": "gordeev",
+    "position": "Инженер",
+    "department": "ОСЭиРЛИУС",
+    "phone": "9030000000",
+    "domain": "orenburg"
+  },
+  {
+    "full_name": null,
+    "id": 5,
+    "company": null,
+    "email": null,
+    "role_id": 6,
+    "status_id": null,
+    "name": "ivanov",
+    "position": null,
+    "department": null,
+    "phone": null,
+    "domain": null
+  },
+  {
+    "full_name": null,
+    "id": 6,
+    "company": null,
+    "email": null,
+    "role_id": 6,
+    "status_id": null,
+    "name": "petrov",
+    "position": null,
+    "department": null,
+    "phone": null,
+    "domain": null
+  },
+  {
+    "full_name": null,
+    "id": 7,
+    "company": null,
+    "email": null,
+    "role_id": 6,
+    "status_id": null,
+    "name": "sidorov",
+    "position": null,
+    "department": null,
+    "phone": null,
+    "domain": null
+  },
+  {
+    "full_name": "Фронтенд Ф. Ф. Фронтендов",
+    "id": 3,
+    "company": "",
+    "email": "",
+    "role_id": 1,
+    "status_id": null,
+    "name": "frontend",
+    "position": "",
+    "department": "",
+    "phone": "",
+    "domain": "orenburg"
+  },
+  {
+    "full_name": null,
+    "id": 4,
+    "company": null,
+    "email": null,
+    "role_id": 4,
+    "status_id": null,
+    "name": "alekseev",
+    "position": null,
+    "department": null,
+    "phone": null,
+    "domain": null
+  }
+]
