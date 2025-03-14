@@ -13,6 +13,7 @@ export default defineConfig({
         ws: true, // Включает поддержку WebSocket, если требуется
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
+      "/parameters": "http://192.168.1.248:8080",
     },
   },
 });

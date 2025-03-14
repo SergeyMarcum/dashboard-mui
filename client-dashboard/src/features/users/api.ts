@@ -1,7 +1,4 @@
-import { createAPI } from "../../api/axios";
-
-// Создаем экземпляр API
-const api = createAPI();
+import api from "../../api/axios"; // Используем единый экземпляр axios
 
 // Пример функции получения списка пользователей
 export const fetchUsers = async () => {

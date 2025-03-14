@@ -1,7 +1,8 @@
 import { create } from "zustand";
-import api from "../api/axios"; // Import configured axios
+import api from "../api/axios";
+import { AxiosError } from "axios"; // Импортируем тип AxiosError
 
-// Export the User interface so it can be used in other files
+// Интерфейс пользователя
 export interface User {
   id: number;
   full_name: string | null;
@@ -20,7 +21,7 @@ interface UsersState {
   users: User[];
   departments: string[];
   isLoading: boolean;
-  fetchUsers: (domain: string) => Promise<void>;
+  fetchUsers: (username: string, sessionCode: string) => Promise<void>;
   fetchDepartments: () => Promise<void>;
   editUser: (userId: number, updatedData: Partial<User>) => Promise<void>;
 }
@@ -29,10 +30,24 @@ export const useUsersStore = create<UsersState>((set) => ({
   users: [],
   departments: [],
   isLoading: false,
-  fetchUsers: async (domain) => {
+
+  fetchUsers: async (username, sessionCode) => {
     set({ isLoading: true });
     try {
-      const response = await api.get(`/users?domain=${domain}`);
+      console.log("Запрос на сервер...");
+
+      // Выполняем запрос к API
+      const response = await api.get("/users", {
+        params: { username, session_code: sessionCode },
+      });
+
+      console.log("Ответ от сервера:", response);
+      console.log("Ответ от сервера (data):", response.data);
+
+      if (!response.data || response.data.length === 0) {
+        console.log("Ответ пустой или не содержит пользователей");
+      }
+
       const users = response.data.map((user: User) => ({
         ...user,
         full_name: user.full_name || "N/A",
@@ -40,13 +55,24 @@ export const useUsersStore = create<UsersState>((set) => ({
         phone: user.phone || "N/A",
         department: user.department || "N/A",
       }));
+
+      console.log("Преобразованные данные пользователей:", users); // Логируем после обработки
+
       set({ users });
-    } catch (error) {
-      console.error("Error fetching users:", error);
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        console.error(
+          "Ошибка загрузки пользователей (AxiosError):",
+          error.response?.data || error.message
+        );
+      } else {
+        console.error("Неизвестная ошибка:", error);
+      }
     } finally {
       set({ isLoading: false });
     }
   },
+
   fetchDepartments: async () => {
     try {
       const response = await api.get("/parameters");
@@ -55,12 +81,13 @@ export const useUsersStore = create<UsersState>((set) => ({
       );
       set({ departments });
     } catch (error) {
-      console.error("Error fetching departments:", error);
+      console.error("Ошибка загрузки отделов:", error);
     }
   },
+
   editUser: async (userId, updatedData) => {
     try {
-      await api.put(`/edit-user`, {
+      await api.put("/edit-user", {
         userId,
         ...updatedData,
       });
@@ -70,7 +97,7 @@ export const useUsersStore = create<UsersState>((set) => ({
         ),
       }));
     } catch (error) {
-      console.error("Error editing user:", error);
+      console.error("Ошибка редактирования пользователя:", error);
     }
   },
 }));
