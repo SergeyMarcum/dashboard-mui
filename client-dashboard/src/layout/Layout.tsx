@@ -3,25 +3,27 @@ import Drawer from "@mui/material/Drawer";
 import AppBar from "@mui/material/AppBar";
 import CssBaseline from "@mui/material/CssBaseline";
 import Toolbar from "@mui/material/Toolbar";
-
-import Typography from "@mui/material/Typography";
-
 import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
+import { Paper } from "@mui/material";
 
 const drawerWidth = 240;
 
 export default function Layout() {
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: "flex", minHeight: "100vh" }}>
       <CssBaseline />
+
+      {/* Верхний бар */}
       <AppBar
         position="fixed"
         sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
       >
         <Topbar />
       </AppBar>
+
+      {/* Боковое меню */}
       <Drawer
         variant="permanent"
         sx={{
@@ -38,33 +40,40 @@ export default function Layout() {
           <Sidebar />
         </Box>
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <Toolbar />
-        <Typography
-          variant="h6"
-          noWrap
-          component="div"
-          sx={{ display: { xs: "none", sm: "block" } }}
-        >
-          Обходчик
-        </Typography>
-        <Typography sx={{ marginBottom: 2 }}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Rhoncus
-          dolor purus non enim praesent elementum facilisis leo vel. Risus at
-          ultrices mi tempus imperdiet. Semper risus in hendrerit gravida rutrum
-          quisque non tellus. Convallis convallis tellus id interdum velit
-          laoreet id donec ultrices. Odio morbi quis commodo odio aenean sed
-          adipiscing. Amet nisl suscipit adipiscing bibendum est ultricies
-          integer quis. Cursus euismod quis viverra nibh cras. Metus vulputate
-          eu scelerisque felis imperdiet proin fermentum leo. Mauris commodo
-          quis imperdiet massa tincidunt. Cras tincidunt lobortis feugiat
-          vivamus at augue. At augue eget arcu dictum varius duis at consectetur
-          lorem. Velit sed ullamcorper morbi tincidunt. Lorem donec massa sapien
-          faucibus et molestie ac.
-        </Typography>
 
-        <Outlet />
+      {/* Основной контент */}
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          p: 5,
+        }}
+      >
+        <Paper
+          elevation={3}
+          sx={{
+            minWidth: "900px", // Чтобы контент не сжимался
+            width: "100%", // Адаптивная ширина
+            p: 4,
+            boxShadow: 5,
+            borderRadius: 2,
+            backgroundColor: "background.paper",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            margin: "auto",
+            overflow: "hidden", // Скрывает лишний контент
+          }}
+        >
+          <Toolbar />
+          <h2>Heading Page</h2>
+          <Box sx={{ width: "100%", overflowX: "auto" }}>
+            <Outlet />
+          </Box>
+        </Paper>
       </Box>
     </Box>
   );
