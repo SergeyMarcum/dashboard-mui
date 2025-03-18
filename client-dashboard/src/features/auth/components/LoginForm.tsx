@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useReducer } from "react";
 import {
   Button,
   Checkbox,
@@ -26,53 +26,93 @@ interface LoginFormProps {
   onSubmit: (data: LoginFormData) => void;
 }
 
+const initialState = {
+  domain: "",
+  username: "",
+  password: "",
+  rememberMe: false,
+  showPassword: false,
+  domains: {} as Record<string, string>,
+  loading: true,
+  error: null as string | null,
+};
+
+type Action =
+  | { type: "SET_FIELD"; field: string; value: string | boolean }
+  | { type: "SET_DOMAINS"; domains: Record<string, string> }
+  | { type: "SET_ERROR"; error: string | null }
+  | { type: "SET_LOADING"; loading: boolean };
+
+const reducer = (state: typeof initialState, action: Action) => {
+  switch (action.type) {
+    case "SET_FIELD":
+      return { ...state, [action.field]: action.value };
+    case "SET_DOMAINS":
+      return {
+        ...state,
+        domains: action.domains,
+        domain: Object.keys(action.domains)[0] || "",
+      };
+    case "SET_ERROR":
+      return { ...state, error: action.error };
+    case "SET_LOADING":
+      return { ...state, loading: action.loading };
+    default:
+      return state;
+  }
+};
+
 const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
-  const [domain, setDomain] = useState<string>("");
-  const [username, setUsername] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [rememberMe, setRememberMe] = useState<boolean>(false);
-  const [domains, setDomains] = useState<Record<string, string>>({});
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
     const loadDomains = async () => {
+      dispatch({ type: "SET_LOADING", loading: true });
       try {
         const data = await fetchDomains();
-        setDomains(data);
-        const firstDomain = Object.keys(data)[0] || "";
-        setDomain(firstDomain); // Устанавливаем первый домен по умолчанию
+        dispatch({ type: "SET_DOMAINS", domains: data });
       } catch (err) {
-        setError(`Не удалось загрузить список доменов: ${err}`);
+        dispatch({
+          type: "SET_ERROR",
+          error: `Ошибка загрузки доменов: ${err}`,
+        });
       } finally {
-        setLoading(false);
+        dispatch({ type: "SET_LOADING", loading: false });
       }
     };
 
     loadDomains();
   }, []);
 
+  const handleChange = (field: string, value: string | boolean) => {
+    dispatch({ type: "SET_FIELD", field, value });
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ domain, username, password, rememberMe });
+    onSubmit({
+      domain: state.domain,
+      username: state.username,
+      password: state.password,
+      rememberMe: state.rememberMe,
+    });
   };
 
   return (
     <form onSubmit={handleSubmit}>
       {/* Выбор домена */}
-      <FormControl fullWidth margin="normal" disabled={loading}>
+      <FormControl fullWidth margin="normal" disabled={state.loading}>
         <InputLabel id="domain-label">Домен</InputLabel>
-        {loading ? (
+        {state.loading ? (
           <CircularProgress size={24} />
         ) : (
           <Select
             labelId="domain-label"
-            value={domain}
-            onChange={(e) => setDomain(e.target.value)}
+            value={state.domain}
+            onChange={(e) => handleChange("domain", e.target.value)}
             label="Домен"
           >
-            {Object.entries(domains).map(([key, label]) => (
+            {Object.entries(state.domains).map(([key, label]) => (
               <MenuItem key={key} value={key}>
                 {label}
               </MenuItem>
@@ -82,15 +122,15 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
       </FormControl>
 
       {/* Ошибка загрузки доменов */}
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {state.error && <p style={{ color: "red" }}>{state.error}</p>}
 
       {/* Поле логина */}
       <TextField
         fullWidth
         margin="normal"
         label="Логин"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
+        value={state.username}
+        onChange={(e) => handleChange("username", e.target.value)}
       />
 
       {/* Поле пароля с "глазиком" */}
@@ -98,17 +138,19 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
         fullWidth
         margin="normal"
         label="Пароль"
-        type={showPassword ? "text" : "password"}
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
+        type={state.showPassword ? "text" : "password"}
+        value={state.password}
+        onChange={(e) => handleChange("password", e.target.value)}
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">
               <IconButton
-                onClick={() => setShowPassword(!showPassword)}
+                onClick={() =>
+                  handleChange("showPassword", !state.showPassword)
+                }
                 edge="end"
               >
-                {showPassword ? <VisibilityOff /> : <Visibility />}
+                {state.showPassword ? <VisibilityOff /> : <Visibility />}
               </IconButton>
             </InputAdornment>
           ),
@@ -119,8 +161,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
       <FormControlLabel
         control={
           <Checkbox
-            checked={rememberMe}
-            onChange={(e) => setRememberMe(e.target.checked)}
+            checked={state.rememberMe}
+            onChange={(e) => handleChange("rememberMe", e.target.checked)}
           />
         }
         label="Запомнить меня"

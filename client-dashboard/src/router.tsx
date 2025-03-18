@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import {
   BrowserRouter,
   Navigate,
@@ -12,6 +12,8 @@ import Layout from "./layout/Layout";
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Login = lazy(() => import("./pages/Login"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const UsersPage = lazy(() => import("./pages/UsersPage"));
+const NewTaskPage = lazy(() => import("./pages/NewTaskPage"));
 
 const ProtectedRoute = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -20,6 +22,13 @@ const ProtectedRoute = () => {
 
 export const AppRouter = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  // Проверяем статус авторизации и загружаем необходимый путь после первого рендера
+  useEffect(() => {
+    if (isAuthenticated) {
+      // Дополнительная логика, если необходимо, например, установим состояние, что пользователь уже авторизован
+    }
+  }, [isAuthenticated]);
 
   return (
     <BrowserRouter>
@@ -39,6 +48,8 @@ export const AppRouter = () => {
           <Route element={<ProtectedRoute />}>
             <Route element={<Layout />}>
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/users" element={<UsersPage />} />
+              <Route path="/tasks/create" element={<NewTaskPage />} />
             </Route>
           </Route>
           <Route path="*" element={<NotFound />} />
