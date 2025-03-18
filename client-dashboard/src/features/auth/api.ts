@@ -1,4 +1,4 @@
-import api from "../../api/axios"; // Используем единый экземпляр axios
+import { get } from "../../shared/api/http";
 import axios from "axios"; // Импортируем axios для использования isAxiosError
 
 // Авторизация пользователя
@@ -10,11 +10,8 @@ export const login = async (
   console.log("Отправляем запрос на сервер:", { username, password, domain });
 
   try {
-    const response = await api.get("/login", {
-      params: { username, password, domain },
-    });
-
-    return response.data;
+    const response = await get("/login", { username, password, domain });
+    return response;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       if (!error.response) {
@@ -31,7 +28,7 @@ export const login = async (
           throw new Error("У вас нет прав на выполнение данной операции.");
         default:
           console.error("Ошибка авторизации:", error);
-          throw error; // Передаём оригинальный объект ошибки
+          throw error;
       }
     }
 
@@ -43,18 +40,16 @@ export const login = async (
 // Получение списка доступных доменов
 export const fetchDomains = async (): Promise<Record<string, string>> => {
   try {
-    const response = await api.get("/domain-list");
-
-    return response.data;
+    const response = await get("/domain-list");
+    return response;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       if (!error.response) {
         console.error("Ошибка сети. Проверьте подключение.");
         throw new Error("Ошибка сети. Проверьте подключение.");
       }
-
       console.error("Ошибка получения доменов:", error);
-      throw error; // Передаём оригинальную ошибку
+      throw error;
     }
 
     console.error("Неизвестная ошибка:", error);

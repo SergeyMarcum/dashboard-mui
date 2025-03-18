@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import api from "../api/axios";
+import api from "../app/api/axios";
 import { AxiosError } from "axios"; // Импортируем тип AxiosError
 
 // Интерфейс пользователя

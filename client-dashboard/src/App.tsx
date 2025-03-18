@@ -1,6 +1,6 @@
 import { ThemeProvider, CssBaseline } from "@mui/material";
 import { theme } from "./theme";
-import { AppRouter } from "./router";
+import { AppRouter } from "./app/router";
 
 export const App = () => (
   <ThemeProvider theme={theme}>

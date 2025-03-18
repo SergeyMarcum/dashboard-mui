@@ -6,14 +6,14 @@ import {
   Routes,
   Outlet,
 } from "react-router-dom";
-import { useAuthStore } from "./store/authStore";
-import Layout from "./layout/Layout";
+import { useAuthStore } from "../store/authStore";
+import Layout from "../layout/Layout";
 
-const Dashboard = lazy(() => import("./pages/Dashboard"));
-const Login = lazy(() => import("./pages/Login"));
-const NotFound = lazy(() => import("./pages/NotFound"));
-const UsersPage = lazy(() => import("./pages/UsersPage"));
-const NewTaskPage = lazy(() => import("./pages/NewTaskPage"));
+const Dashboard = lazy(() => import("../pages/Dashboard"));
+const Login = lazy(() => import("../pages/Login"));
+const NotFound = lazy(() => import("../pages/NotFound"));
+const UsersPage = lazy(() => import("../pages/UsersPage"));
+const NewTaskPage = lazy(() => import("../pages/NewTaskPage"));
 
 const ProtectedRoute = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);

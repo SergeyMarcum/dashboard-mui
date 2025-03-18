@@ -1,12 +1,13 @@
-import api from "../../api/axios"; // Используем единый экземпляр axios
+import { get, put, del } from "../../shared/api/http";
 
-// Пример функции получения списка пользователей
 export const fetchUsers = async () => {
-  try {
-    const response = await api.get("/users"); // Теперь запрос будет передавать куки
-    return response.data; // Возвращаем список пользователей
-  } catch (error) {
-    console.error("Ошибка загрузки пользователей:", error);
-    throw error;
-  }
+  return get("/users");
+};
+
+export const updateUser = async (userId: string, data: object) => {
+  return put(`/users/${userId}`, data);
+};
+
+export const deleteUser = async (userId: string) => {
+  return del(`/users/${userId}`);
 };
