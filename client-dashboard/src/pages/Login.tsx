@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useReducer } from "react";
 import { Box, Snackbar, Typography } from "@mui/material";
 import { useAuthStore } from "../store/authStore";
 import { useNavigate } from "react-router-dom";
@@ -6,11 +6,26 @@ import LoginForm, {
   LoginFormData,
 } from "../features/auth/components/LoginForm";
 
+const initialState = {
+  errorMessage: "",
+};
+
+type Action = { type: "SET_ERROR"; error: string };
+
+const reducer = (state: typeof initialState, action: Action) => {
+  switch (action.type) {
+    case "SET_ERROR":
+      return { ...state, errorMessage: action.error };
+    default:
+      return state;
+  }
+};
+
 const Login = () => {
+  const [state, dispatch] = useReducer(reducer, initialState);
   const login = useAuthStore((state) => state.login);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const navigate = useNavigate();
-  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     if (isAuthenticated) navigate("/dashboard");
@@ -20,21 +35,15 @@ const Login = () => {
     console.log("Login.tsx -> handleLogin полученные данные:", data);
     try {
       await login(data.username, data.password, data.domain);
-
-      localStorage.setItem("domain", data.domain);
-      if (data.rememberMe) {
-        localStorage.setItem("rememberMe", "true");
-      } else {
-        localStorage.removeItem("rememberMe");
-      }
-
       navigate("/dashboard");
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        setErrorMessage(error.message);
-      } else {
-        setErrorMessage("Неизвестная ошибка авторизации.");
-      }
+      dispatch({
+        type: "SET_ERROR",
+        error:
+          error instanceof Error
+            ? error.message
+            : "Неизвестная ошибка авторизации.",
+      });
     }
   };
 
@@ -54,10 +63,10 @@ const Login = () => {
       </Typography>
       <LoginForm onSubmit={handleLogin} />
       <Snackbar
-        open={!!errorMessage}
+        open={!!state.errorMessage}
         autoHideDuration={6000}
-        onClose={() => setErrorMessage("")}
-        message={errorMessage}
+        onClose={() => dispatch({ type: "SET_ERROR", error: "" })}
+        message={state.errorMessage}
       />
     </Box>
   );
